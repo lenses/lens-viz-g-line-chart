@@ -1,30 +1,29 @@
-
 <link rel="import" href="../polymer/polymer.html">
 <link rel="import" href="../th-d3-chart/th-d3-chart.html">
 <link rel="import" href="../google-chart/google-chart.html">
-<link rel="import" href="../th-data-utility/th-data-utility.html">
-<link rel="import" href="../th-u-data-selector/th-u-data-selector.html">
+<link rel="import" href="../lens-u-data-utility/lens-u-data-utility.html">
+<link rel="import" href="../lens-u-data-selector/lens-u-data-selector.html">
 
 <!--
 Element providing a Thelma wrapper for the Google Line Chart.
 
 ##### Example
 
-    <th-google-line></th-google-line>
+    <lens-viz-g-line-chart></lens-viz-g-line-chart>
 
-@element th-google-line
+@element lens-viz-g-line-chart
 @blurb Element providing a Thelma wrapper for the Google geochart.
 @status alpha
-@homepage http://nishacodes.github.io/th-google-regions
+@homepage http://nishacodes.github.io/lens-viz-g-line-chart
 -->
 
-<polymer-element name="th-google-line"  extends="th-d3-chart" attributes="input chartData selectedLabel selectedValues backgroundColor legend showOptions labelValueSelection chartTitle gridlines orientation yAxisMin yAxisMax textColor fontSize hAxisTitle vAxisTitle gridlinesColor">
+<polymer-element name="lens-viz-g-line-chart"  extends="th-d3-chart" attributes="input chartData selectedLabel selectedValues backgroundColor legend showOptions labelValueSelection chartTitle gridlines orientation yAxisMin yAxisMax textColor fontSize hAxisTitle vAxisTitle gridlinesColor">
   <template> 
     <core-style ref="theme"></core-style>
-    <link rel="stylesheet" href="th-google-line.css">
-    <th-data-utility id="utility"></th-data-utility>
+    <link rel="stylesheet" href="lens-viz-g-line-chart.css">
+    <lens-u-data-utility id="utility"></lens-u-data-utility>
 
-    <th-u-data-selector id="data_selector" input="{{chartData}}" selections="{{labelValueSelection}}"  style="display: {{showOptions | displayFilter}}; height: 10%;"></th-u-data-selector>
+    <lens-u-data-selector id="data_selector" input="{{chartData}}" selections="{{labelValueSelection}}"  style="display: {{showOptions | displayFilter}}; height: 10%;"></lens-u-data-selector>
  
     <google-chart id="googleChart" style="width:100%; height: {{showOptions | heightFilter}};"
           type='line'
@@ -35,29 +34,13 @@ Element providing a Thelma wrapper for the Google Line Chart.
 
   <script>
 
-    Polymer('th-google-line', {
+    Polymer('lens-viz-g-line-chart', {
 
-      /**
-       ** 'chartData' is the data represented by the map. 
-       * @type {Array}
-       *
-       ** 'region' can be a country, state, or metro 
-       * @type {String}
-       *
-       ** 'value' determines the color of the marker or fill
-       * @type {Number}
-       */
       chartData: [
         {"Year": "2014", "Sales": 100, "Profit": 50},
         {"Year": "2015", "Sales": 50, "Profit": 40},
         {"Year": "2016", "Sales": 300, "Profit": 200}
       ],
-
-      /**
-       * Data label for X axis
-       * @type {String}
-       */
-      // dataLabels: ["Life Expectancy","Fertility Rate","Growth"],
       /**
        * 'chartWidth' refers to the width of the element container
        * @type {Number}
@@ -277,7 +260,7 @@ Element providing a Thelma wrapper for the Google Line Chart.
       },
       getMetaData: function(){
         return {
-          "name": "th-google-line",
+          "name": "lens-viz-g-line-chart",
           "description": "Multi Line Chart by Google",
           "category":"chart",
           "version": "0.0.1",

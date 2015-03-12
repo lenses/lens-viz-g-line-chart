@@ -1,23 +1,23 @@
 {
-  "name": "th-google-regions",
+  "name": "lens-viz-g-line-chart",
   "keywords": [
     "seed",
     "polymer",
     "web-components"
   ],
-  "main": "th-google-regions.html",
+  "main": "lens-viz-g-line-chart.html",
   "dependencies": {
     "polymer": "Polymer/polymer#~0.3.5",
     "google-chart": "GoogleWebComponents/google-chart#master"
   },
-  "homepage": "https://github.com/thelmanews/th-google-scatter-bubble",
+  "homepage": "https://github.com/lenses/lens-viz-g-line-chart",
   "_release": "ecd95fcd51",
   "_resolution": {
     "type": "branch",
     "branch": "master",
     "commit": "ecd95fcd51ff1ac4026f47f5648351b1c8990e92"
   },
-  "_source": "https://github.com/thelmanews/th-google-scatter-bubble.git",
+  "_source": "https://github.com/lenses/lens-viz-g-line-chart.git",
   "_target": "*",
-  "_originalSource": "https://github.com/thelmanews/th-google-scatter-bubble.git"
+  "_originalSource": "https://github.com/lenses/lens-viz-g-line-chart.git"
 }
