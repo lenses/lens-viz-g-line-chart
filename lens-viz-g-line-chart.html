@@ -17,7 +17,7 @@ Element providing a Thelma wrapper for the Google Line Chart.
 @homepage http://nishacodes.github.io/lens-viz-g-line-chart
 -->
 
-<polymer-element name="lens-viz-g-line-chart"  extends="th-d3-chart" attributes="input chartData selectedLabel selectedValues backgroundColor legend showOptions labelValueSelection chartTitle gridlines orientation yAxisMin yAxisMax textColor fontSize hAxisTitle vAxisTitle gridlinesColor">
+<polymer-element name="lens-viz-g-line-chart"  extends="th-d3-chart" attributes="input chartData selectedLabel selectedValues backgroundColor legend showOptions labelValueSelection chartTitle gridlines orientation yAxisMin yAxisMax textColor fontSize hAxisTitle vAxisTitle gridlinesColor numberPattern">
   <template> 
     <core-style ref="theme"></core-style>
     <link rel="stylesheet" href="lens-viz-g-line-chart.css">
@@ -28,7 +28,8 @@ Element providing a Thelma wrapper for the Google Line Chart.
     <google-chart id="googleChart" style="width:100%; height: {{showOptions | heightFilter}};"
           type='line'
           options= "{{options}}"
-          data="{{_data}}">
+          data="{{_data}}"
+          numberFormats="{{numberFormats}}">
     </google-chart>
   </template>
 
@@ -64,6 +65,7 @@ Element providing a Thelma wrapper for the Google Line Chart.
       numberFormat: "", 
       labelValueSelection: null,
       showOptions: true,
+      numberPattern: "",
       gridlines: 5,
       orientation: 'horizontal',
       observe: {
@@ -78,7 +80,9 @@ Element providing a Thelma wrapper for the Google Line Chart.
         gridlinesColor: "updateOptions",
         chartTitle: "updateOptions",
         yAxisMin: "updateOptions",
-        yAxisMax: "updateOptions"
+        yAxisMax: "updateOptions",
+        numberPattern:  "updateData",
+        _numberPattern:  "updateOptions"
       },
       /*
       init: function() {
@@ -86,8 +90,8 @@ Element providing a Thelma wrapper for the Google Line Chart.
       },  
       */ 
       ready : function() {
-        //this._configureOptions();
         this.reformatData();
+        this.updateOptions();
 
          // Listen for theme changes
         document.addEventListener('th-theme-changed', function(e) {
@@ -147,11 +151,18 @@ Element providing a Thelma wrapper for the Google Line Chart.
         }
         var firstRow = self.labelValueSelection[1].map(function(item){ return item;}) ;
         
-        self._data = self.chartData.map(function(item){
+        self._data = self.chartData.map(function(item, index){
           var row = [];
           row.push(item[self.labelValueSelection[0]]);
           for(var i=0; i<self.labelValueSelection[1].length; i++){
-            
+            if (index === 0){
+              // Extract the number format of the first row of data and apply to tooltips
+              var format = self.$.utility.extractNumberFormat(item[self.labelValueSelection[1][i]]);
+              if (format){
+                self._numberPattern = format.pattern; // Use this pattern to apply to axis numbers 
+                self.numberFormats.push({col: i + 1, prefix: format.prefix, suffix: format.suffix, groupingSymbol:',', fractionDigits: format.decimalPlaces});
+              }
+            }
             var unformattedValue = self.$.utility.unformatString(item[self.labelValueSelection[1][i]]);
             row.push(unformattedValue);
           }
@@ -161,7 +172,17 @@ Element providing a Thelma wrapper for the Google Line Chart.
         firstRow.unshift(self.labelValueSelection[0]);
         self._data.unshift(firstRow);
 
-       
+        // If a specific number pattern is given, override the default pattern extracted from values
+        if (self.numberPattern){
+          self.numberFormats = [];
+          firstRow.forEach(function(item, index){
+            self.numberFormats.push({col: index, pattern: self.numberPattern});
+          })  
+        }
+      },
+      updateData: function() {
+        this.reformatData();
+        this.updateOptions();
       },
       updateOptions: function(){
         this._configureOptions();
@@ -178,7 +199,6 @@ Element providing a Thelma wrapper for the Google Line Chart.
         var bgColor = self.backgroundColor || colors.theme.background || "none";
 
         self.minValue = self.minValue || 0;
-
         // Define chart options 
         self.options = {
           title: self.chartTitle,
@@ -204,7 +224,7 @@ Element providing a Thelma wrapper for the Google Line Chart.
             title: self.vAxisTitle,
             titleTextStyle: { color: fgColor, fontName: colors.theme.font, fontSize: self.fontSize*1.25},
             baselineColor: fgColor,
-            format: "#,###.##",  //TODO: add more options here and figure out how to format numbers in tooltips
+            format: self.numberPattern || self._numberPattern || "#,###.##", // numberPattern is exposed as an attribute and _numberPattern is 
             gridlines: {
               count: self.gridlines,
               color: self.gridlinesColor || fgColor
@@ -218,7 +238,7 @@ Element providing a Thelma wrapper for the Google Line Chart.
             titleTextStyle: { color: fgColor, fontName: colors.theme.font, fontSize: self.fontSize*1.25},
             baselineColor: fgColor,
             textStyle:{ color: fgColor, fontName: colors.theme.font, fontSize: '0.85em'},
-            format: "#,###.##",  //TODO: add more options here and figure out how to format numbers in tooltips
+            format: self.numberPattern || self._numberPattern || "#,###.##", // numberPattern is exposed as an attribute and _numberPattern is 
             gridlines: {
               count: self.gridlines,
               color: self.gridlinesColor || fgColor
@@ -269,6 +289,7 @@ Element providing a Thelma wrapper for the Google Line Chart.
             "vAxisTitle":{"friendly":"Vertical Axis Title", "type":"string", "default":""},
             "hAxisTitle":{"friendly":"Horizontal Axis Title", "type":"string", "default":""},
             "orientation": {"friendly":"Orientation", "type": "dropdown", "default": "horizontal", "values":["horizontal", "vertical"]},
+            "numberPattern": {"friendly":"Number Pattern", "type":"string", "default":""},
             "fontSize":{"friendly":"Font Size", "type":"int", "default":""},
             "textColor":{"friendly":"Text Color", "type":"color", "default":""},
             "backgroundColor":{"friendly":"Background Color", "type":"color", "default":""},
