@@ -45,49 +45,92 @@ Element providing a Thelma wrapper for the Google Line Chart.
         },
         labelValueSelection: {
           type: Array,
-          value: ['','']
+          value: ['',''],
+          //no need for observer, event handler takes care of that.
         },
         numberFormats: {
           type: Array,
           value: []
-        }
+        },
+        legend: {
+          type: Boolean,
+          value: true,
+          observer: '_updateOptions'
+        },
+        showOptions: {
+          type: Boolean,
+          value: true
+        },
+        numberPattern: {
+          type: String,
+          value: "",
+          observer: '_updateOptions'
+        },
+        gridlines: {
+          type: Number,
+          value: 5,
+          observer: '_updateOptions'
+        },
+        gridlinesColor: {
+          type: String,
+          value: null,
+          observer: '_updateOptions'
+        },
+        chartTitle: {
+          type: String,
+          value: null,
+          observer: '_updateOptions'
+        },
+        orientation: {
+          type: String,
+          value: 'horizontal',
+          observer: '_updateOptions'
+        },
+        fontSize: {
+          type: String,
+          value: null,
+          observer: '_updateOptions'
+        },
+        backgroundColor: {
+          type: String,
+          value: null,
+          observer: '_updateOptions'
+        },
+        textColor: {
+          type: String,
+          value: null,
+          observer: '_updateOptions'
+        },
+        vAxisTitle: {
+          type: String,
+          value: null,
+          observer: '_updateOptions'
+        },
+        hAxisTitle: {
+          type: String,
+          value: null,
+          observer: '_updateOptions'
+        },
+        yAxisMin: {
+          type: Number,
+          value: null,
+          observer: '_updateOptions'
+        },
+        yAxisMax: {
+          type: Number,
+          value: null,
+          observer: '_updateOptions'
+        },
       },
-/*
-      legend: true,
-      labelValueSelection: null,
-      showOptions: true,
-      numberPattern: "",
-      gridlines: 5,
-      orientation: 'horizontal',
-      observe: {
-        legend: "updateOptions",
-        fontSize: "updateOptions",
-        backgroundColor: "updateOptions",
-        textColor: "updateOptions",
-        vAxisTitle: "updateOptions",
-        hAxisTitle: "updateOptions",
-        orientation: "updateOptions",
-        gridlines: "updateOptions",
-        gridlinesColor: "updateOptions",
-        chartTitle: "updateOptions",
-        yAxisMin: "updateOptions",
-        yAxisMax: "updateOptions",
-        numberPattern:  "updateData",
-        _numberPattern:  "updateOptions"
-      },
-      /*
-      init: function() {
-        this.inputChanged();
-      },  
-      */ 
+
       ready : function() {
         this.reformatData();
-        this.updateOptions();
+        this._updateOptions();
 
          // Listen for theme changes
         // document.addEventListener('th-theme-changed', function(e) {
         //   this.getColors();
-        //   this.updateOptions();
+        //   this._updateOptions();
         // }.bind(this));
 
         this.$.data_selector.addEventListener('lens-selection-changed', function() {
@@ -175,9 +218,9 @@ Element providing a Thelma wrapper for the Google Line Chart.
       },
       updateData: function() {
         this.reformatData();
-        this.updateOptions();
+        this._updateOptions();
       },
-      updateOptions: function(){
+      _updateOptions: function(){
         this._configureOptions();
         this.$.googleChart.drawChart();
       },
