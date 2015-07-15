@@ -16,13 +16,11 @@ Element providing a Thelma wrapper for the Google Line Chart.
 @homepage http://nishacodes.github.io/lens-viz-g-line-chart
 -->
 
-<dom-module id="lens-viz-g-line-chart" attributes="input selectedLabel selectedValues backgroundColor legend showOptions labelValueSelection chartTitle gridlines orientation yAxisMin yAxisMax textColor fontSize hAxisTitle vAxisTitle gridlinesColor numberPattern">
+<dom-module id="lens-viz-g-line-chart" attributes="selectedLabel selectedValues backgroundColor legend showOptions chartTitle gridlines orientation yAxisMin yAxisMax textColor fontSize hAxisTitle vAxisTitle gridlinesColor numberPattern">
   <template> 
     <link rel="stylesheet" href="lens-viz-g-line-chart.css">
     <lens-u-data-utility id="utility"></lens-u-data-utility>
-
     <lens-u-data-selector id="data_selector" input="{{input}}" style="display: {{showOptions | displayFilter}}; height: 10%;"></lens-u-data-selector>
- 
     <google-chart id="googleChart" style="width:100%; height: {{showOptions | heightFilter}};"
           type='line'
           options= "{{options}}"
@@ -33,7 +31,7 @@ Element providing a Thelma wrapper for the Google Line Chart.
 
   <script>
 
-    Polymer('lens-viz-g-line-chart', {
+    Polymer({
 
       properties: {
         input: {
