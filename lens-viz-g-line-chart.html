@@ -1,5 +1,4 @@
 <link rel="import" href="../polymer/polymer.html">
-<link rel="import" href="../th-d3-chart/th-d3-chart.html">
 <link rel="import" href="../google-chart/google-chart.html">
 <link rel="import" href="../lens-u-data-utility/lens-u-data-utility.html">
 <link rel="import" href="../lens-u-data-selector/lens-u-data-selector.html">
@@ -17,13 +16,12 @@ Element providing a Thelma wrapper for the Google Line Chart.
 @homepage http://nishacodes.github.io/lens-viz-g-line-chart
 -->
 
-<polymer-element name="lens-viz-g-line-chart"  extends="th-d3-chart" attributes="input chartData selectedLabel selectedValues backgroundColor legend showOptions labelValueSelection chartTitle gridlines orientation yAxisMin yAxisMax textColor fontSize hAxisTitle vAxisTitle gridlinesColor numberPattern">
+<dom-module id="lens-viz-g-line-chart" attributes="input selectedLabel selectedValues backgroundColor legend showOptions labelValueSelection chartTitle gridlines orientation yAxisMin yAxisMax textColor fontSize hAxisTitle vAxisTitle gridlinesColor numberPattern">
   <template> 
-    <core-style ref="theme"></core-style>
     <link rel="stylesheet" href="lens-viz-g-line-chart.css">
     <lens-u-data-utility id="utility"></lens-u-data-utility>
 
-    <lens-u-data-selector id="data_selector" input="{{chartData}}" selections="{{labelValueSelection}}"  style="display: {{showOptions | displayFilter}}; height: 10%;"></lens-u-data-selector>
+    <lens-u-data-selector id="data_selector" input="{{input}}" style="display: {{showOptions | displayFilter}}; height: 10%;"></lens-u-data-selector>
  
     <google-chart id="googleChart" style="width:100%; height: {{showOptions | heightFilter}};"
           type='line'
@@ -37,25 +35,22 @@ Element providing a Thelma wrapper for the Google Line Chart.
 
     Polymer('lens-viz-g-line-chart', {
 
-      chartData: [
-        {"Year": "2014", "Sales": 100, "Profit": 50},
-        {"Year": "2015", "Sales": 50, "Profit": 40},
-        {"Year": "2016", "Sales": 300, "Profit": 200}
-      ],
-      /**
-       * 'chartWidth' refers to the width of the element container
-       * @type {Number}
-       */
-      chartWidth: 280,
-      /**
-       * 'chartHeight' refers to the height of the element container
-       * @type {Number}
-       */
-      chartHeight: 400,
-      /**
-       * 'legend' determines whether or not to display a legend
-       * @type {Boolean}
-       */
+      properties: {
+        input: {
+          type: Array,
+          value: [
+                    {"Year": "2014", "Sales": 100, "Profit": 50},
+                    {"Year": "2015", "Sales": 50, "Profit": 40},
+                    {"Year": "2016", "Sales": 300, "Profit": 200}
+          ],
+          observer: '_inputChanged'
+        },
+        labelValueSelection: {
+          type: Array,
+          value: ['','']
+        }
+      },
+/*
       legend: true,
       labelValueSelection: null,
       showOptions: true,
@@ -88,12 +83,12 @@ Element providing a Thelma wrapper for the Google Line Chart.
         this.updateOptions();
 
          // Listen for theme changes
-        document.addEventListener('th-theme-changed', function(e) {
-          this.getColors();
-          this.updateOptions();
-        }.bind(this));
+        // document.addEventListener('th-theme-changed', function(e) {
+        //   this.getColors();
+        //   this.updateOptions();
+        // }.bind(this));
 
-        this.$.data_selector.addEventListener('th-data-selection-changed', function() {
+        this.$.data_selector.addEventListener('lens-selection-changed', function() {
 
           this.labelValueSelection = this.$.data_selector.selections;
 
@@ -106,13 +101,13 @@ Element providing a Thelma wrapper for the Google Line Chart.
         
       },
 
-      inputChanged: function () {
+      _inputChanged: function () {
         var self = this;
-        self.chartData = self.input;
+        self.input = self.input;
 
-        if(self.chartData && self.chartData.length>0) {
+        if(self.input && self.input.length>0) {
 
-          self.dataAttributes = Object.keys(self.chartData[0]);
+          self.dataAttributes = Object.keys(self.input[0]);
           //self.getDefaultSelections();
           self.reformatData();
           self._configureOptions();
@@ -135,7 +130,7 @@ Element providing a Thelma wrapper for the Google Line Chart.
 
  
       /**
-       * 'reformatData' converts chartData into the correct data structure for the map
+       * 'reformatData' converts input into the correct data structure for the map
        */
       reformatData: function(){
         var self = this; 
@@ -145,7 +140,7 @@ Element providing a Thelma wrapper for the Google Line Chart.
         }
         var firstRow = self.labelValueSelection[1].map(function(item){ return item;}) ;
         
-        self._data = self.chartData.map(function(item, index){
+        var tmpData = self.input.map(function(item, index){
           var row = [];
           row.push(item[self.labelValueSelection[0]]);
           for(var i=0; i<self.labelValueSelection[1].length; i++){
@@ -164,7 +159,7 @@ Element providing a Thelma wrapper for the Google Line Chart.
         });
 
         firstRow.unshift(self.labelValueSelection[0]);
-        self._data.unshift(firstRow);
+        tmpData.unshift(firstRow);
 
         // If a specific number pattern is given, override the default pattern extracted from values
         if (self.numberPattern){
@@ -173,6 +168,8 @@ Element providing a Thelma wrapper for the Google Line Chart.
             self.numberFormats.push({col: index, pattern: self.numberPattern});
           })  
         }
+
+        self._data = tmpData;
       },
       updateData: function() {
         this.reformatData();
@@ -249,6 +246,7 @@ Element providing a Thelma wrapper for the Google Line Chart.
        */
       getColors: function(){
         colors = {};
+        /*
         colors.theme = window.CoreStyle.g.theme;
         colors.accents = [];
 
@@ -257,8 +255,52 @@ Element providing a Thelma wrapper for the Google Line Chart.
             colors.accents.push(colors.theme[color]);
           }
         }
+        */
 
-        colors.count = colors.accents.length;
+        colors['theme'] = {
+            foreground1: '#2B2B2B',
+            foreground2: '#FFFFFF',
+            background: '#FFFFFF',
+            accent0: '#3AA5DD',
+            accent1: '#52B64F',  
+            accent2: '#F2673A',  
+            accent3:'#454A50',  
+            accent4: '#969696',  
+            accent5: '#F6F7F7',  
+            accent6: '#51574a',
+            accent7: '#447c69',
+            accent8: '#74c493',
+            accent9: '#8e8c6d',
+            accent10: '#e4bf80',
+            accent11: '#e9d78e',
+            accent12: '#e2975d',
+            accent13: '#f19670',
+            accent14: '#e16552',
+            accent15: '#c94a53',
+            accent16: '#be5168',
+            accent17: '#a34974',
+            accent18: '#993767',
+            accent19: '#65387d',
+            accent20: '#4e2472',
+            accent21: '#9163b6',
+            accent22: '#e279a3',
+            accent23: '#e0598b',
+            accent24: '#7c9fb0',
+            accent25: '#5698c4',
+            accent26: '#9abf88',
+            font: "'proxima-nova', sans-serif",
+            serifFont: "'Chronicle Display', 'Times Roman', 'Times New Roman', Georgia, serif",
+            sansSerifFont: "'proxima-nova', sans-serif",
+            mapColors: ['rgb(239,243,255)','rgb(198,219,239)','rgb(158,202,225)','rgb(107,174,214)','rgb(66,146,198)','rgb(33,113,181)','rgb(8,69,148)']
+        };
+        colors.accents = Object.keys(colors.theme).filter(function(key) {
+            return key.indexOf('accent')>-1;
+          })
+          .map(function(key) {
+            return colors.theme[key];
+          });
+
+        colors.count = colors.accents.length;//colors.accents.length;
 
         return colors;
       },
@@ -270,30 +312,6 @@ Element providing a Thelma wrapper for the Google Line Chart.
       },
       heightFilter: function(value){
         return value ? "90%" : "100%";
-      },
-      getMetaData: function(){
-        return {
-          "name": "lens-viz-g-line-chart",
-          "description": "Multi Line Chart by Google",
-          "category":"chart",
-          "version": "0.0.1",
-          "inputAttr": {
-            "chartTitle":{"friendly":"Title", "type":"string", "default":""},
-            "vAxisTitle":{"friendly":"Vertical Axis Title", "type":"string", "default":""},
-            "hAxisTitle":{"friendly":"Horizontal Axis Title", "type":"string", "default":""},
-            "orientation": {"friendly":"Orientation", "type": "dropdown", "default": "horizontal", "values":["horizontal", "vertical"]},
-            "numberPattern": {"friendly":"Number Pattern", "type":"string", "default":""},
-            "fontSize":{"friendly":"Font Size", "type":"int", "default":""},
-            "textColor":{"friendly":"Text Color", "type":"color", "default":""},
-            "backgroundColor":{"friendly":"Background Color", "type":"color", "default":""},
-            "gridlinesColor":{"friendly":"Gridlines Color", "type":"color", "default":""},
-            "gridlines":{"friendly":"Number of Gridlines", "type":"int", "default":"5"},
-            "yAxisMin":{"friendly":"Y Axis Min", "type":"int", "default":""},
-            "yAxisMax":{"friendly":"Y Axis Max", "type":"int", "default":""},
-            "legend":{"friendly":"Show Legend?", "type":"boolean", "default": true}
-          }
-        }
-
       }
 
 
@@ -302,4 +320,4 @@ Element providing a Thelma wrapper for the Google Line Chart.
   
   </script>
 
-</polymer-element>
+</dom-module>
