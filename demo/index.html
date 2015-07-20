@@ -96,7 +96,10 @@
       //set the input
       elem.legend = false;
       elem.input = input;
-
+      //TODO there shouldn't be a settimeout but needed now for race condition
+      setTimeout(function() {
+        elem.labelValueSelection = ['text', ['dollar', 'text_number']];
+      },100);
       preInput.textContent = JSON.stringify(input, undefined, 2);
 
       // update output

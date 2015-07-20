@@ -46,6 +46,7 @@ Element providing a Thelma wrapper for the Google Line Chart.
         labelValueSelection: {
           type: Array,
           value: ['',''],
+          observer: '_inputChanged'
           //no need for observer, event handler takes care of that.
         },
         numberFormats: {
